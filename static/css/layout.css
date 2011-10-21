@@ -1,0 +1,21 @@
+html, body {
+    background-image: url('/img/bg.png');
+    background-repeat: repeat;
+    text-align: center;
+}
+
+h1 {
+    margin: 15px;
+    margin-bottom: 50px;
+/*    visibility: hidden; */
+    background-image: url('/img/logo.png');
+}
+
+input {
+    margin: 2px;
+}
+
+div#index > h2 {
+    margin: 20px;
+    display: block;
+}

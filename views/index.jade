@@ -1,0 +1,10 @@
+h1 sendify
+a(class='btn primary') Start
+div(id='index')
+    h2 1) give this link to your friend:
+    input(type='text', value=link, disabled='true')
+    input(type='button', value='copy', class='btn', id='copy_btn')
+    h2 2) upload your file:
+    form(action=form_url, method='POST', enctype='multipart/form-data')
+        input(type='file', name='file')
+        input(type='submit', value='send', class='btn primary')
