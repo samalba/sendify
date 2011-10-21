@@ -47,33 +47,33 @@ app.post('/send/:id', function(req, res) {
 app.get('/fetch/:id', function(req, res) {
     attr = req.params.id + '_attr';
     data = req.params.id + '_data';
-    redis.exists(attr, function(err, exists) {
-        //if (!exists) {
-        //    res.send('No data', 404);
-        //    return;
-        //}
-        redis.hget(attr, 'mime', function(err, mime) {
-            res.header('Content-Type', mime);
-        });
-        redis.hget(attr, 'filename', function(err, filename) {
-            res.header('Content-Disposition', 'attachment; filename=' + filename);
-        });
-        var lpop_cb = function(err, chunk) {
-            if (chunk === '') {
-                res.end();
-                redis.del(attr);
-                redis.del(data);
-                return;
-            }
-            if (chunk === null) {
-                setTimeout(function() {
-                    redis.lpop(data, lpop_cb);
-                }, 1000);
-                return;
-            }
+    var sentHeaders = false;
+    var sendHeaders = function(chunk) {
+        redis.hmget(attr, 'mime', 'filename', function(err, fields) {
+            res.header('Content-Type', fields[0]);
+            res.header('Content-Disposition', 'attachment; filename=' + fields[1]);
             res.write(chunk, 'binary');
-            redis.lpop(data, lpop_cb);
-        };
+        });
+       sentHeaders = true;
+    };
+    var lpop_cb = function(err, chunk) {
+        if (chunk === '') {
+            res.end();
+            redis.del(attr);
+            redis.del(data);
+            return;
+        }
+        if (chunk === null) {
+            setTimeout(function() {
+                redis.lpop(data, lpop_cb);
+            }, 1000);
+            return;
+        }
+        if (sentHeaders === false)
+            sendHeaders(chunk);
+        else
+            res.write(chunk, 'binary');
         redis.lpop(data, lpop_cb);
-    });
+    };
+    redis.lpop(data, lpop_cb);
 });

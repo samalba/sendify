@@ -2,6 +2,19 @@ html, body {
     background-image: url('/img/bg.png');
     background-repeat: repeat;
     text-align: center;
+    min-height: 300px;
+}
+
+/* logo */
+body > img {
+    height: 120px;
+}
+
+/* start button */
+body > img + a {
+    position: relative;
+    top: 80px;
+    right: 170px;
 }
 
 h1 {
